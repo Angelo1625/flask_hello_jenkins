@@ -25,8 +25,8 @@ spec:
     stage('Test python') {
       steps {
         container('python') {
-          bat "pip install -r requirements.txt"
-          bat "python test.py"
+          sh "pip install -r requirements.txt"
+          sh "python test.py"
         }
       }
     }
