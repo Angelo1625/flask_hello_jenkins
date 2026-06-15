@@ -1,6 +1,7 @@
 pipeline {
   agent {
     kubernetes {
+      // Note : Vous pouvez remplacer 'label' par 'inheritFrom' si vous voulez éviter le message de warning
       label 'jenkins-agent-my-app'
       yaml """
 apiVersion: v1
@@ -24,16 +25,17 @@ spec:
     volumeMounts:
     - mountPath: /var/run/docker.sock
       name: docker-sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
 
   - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.2
     command:
     - cat
     tty: true
+
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
 """
     }
   }
