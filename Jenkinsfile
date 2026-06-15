@@ -16,24 +16,27 @@ spec:
     - cat
     tty: true
 
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
+  - name: docker
+    image: docker
     command:
-    - sleep
-    args:
-    - 99d
-    # AJOUT : On injecte l'IP de la machine hôte dans le conteneur Kaniko
-    env:
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
+    - cat
+    tty: true
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
 
   - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.2
     command:
     - cat
     tty: true
+
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
 """
     }
   }
@@ -52,10 +55,9 @@ spec:
 
     stage('Build image') {
       steps {
-        container('kaniko') {
-          // MODIFICATION : On utilise '$HOST_IP' et des guillemets simples (') 
-          // pour que Jenkins laisse le conteneur évaluer la variable.
-          sh '/kaniko/executor --context=dir://. --dockerfile=Dockerfile --destination=$HOST_IP:4000/pythontest:latest --insecure'
+        container('docker') {
+          sh "docker build -t localhost:4000/pythontest:latest ."
+          sh "docker push localhost:4000/pythontest:latest"
         }
       }
     }
