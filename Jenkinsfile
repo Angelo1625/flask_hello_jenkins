@@ -15,15 +15,12 @@ spec:
     command:
     - cat
     tty: true
-  - name: docker
-    image: docker:24.0-dind
-    securityContext:
-      privileged: true
-    env:
-    - name: DOCKER_TLS_CERTDIR
-      value: ""
-    - name: DOCKER_HOST
-      value: "tcp://localhost:2375"
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:v1.23.0-debug
+    command:
+    - sleep
+    args:
+    - "9999999"
   volumes:
   - name: workspace-volume
     emptyDir: {}
@@ -44,10 +41,14 @@ spec:
     }
     stage('Build image') {
       steps {
-        container('python') {
-          sh "sleep 15"
-          sh "DOCKER_HOST=tcp://localhost:2375 docker build -t localhost:4000/pythontest:latest ."
-          sh "DOCKER_HOST=tcp://localhost:2375 docker push localhost:4000/pythontest:latest"
+        container('kaniko') {
+          sh """
+            /kaniko/executor \
+              --context=dir:///home/jenkins/agent/workspace/flask_hello_jenkins_main \
+              --destination=localhost:4000/pythontest:latest \
+              --insecure \
+              --skip-tls-verify
+          """
         }
       }
     }
