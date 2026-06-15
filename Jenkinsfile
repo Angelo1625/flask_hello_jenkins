@@ -22,17 +22,18 @@ spec:
     - sleep
     args:
     - 99d
+    # AJOUT : Récupération dynamique de l'IP de votre machine
+    env:
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
 
   - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.2
     command:
     - cat
     tty: true
-
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
 """
     }
   }
@@ -52,7 +53,8 @@ spec:
     stage('Build image') {
       steps {
         container('kaniko') {
-          sh "/kaniko/executor --context=dir://. --dockerfile=Dockerfile --destination=localhost:4000/pythontest:latest --insecure"
+          // Utilisation de guillemets simples ' ' pour que Jenkins laisse le conteneur interpréter $HOST_IP
+          sh '/kaniko/executor --context=dir://. --dockerfile=Dockerfile --destination=$HOST_IP:4000/pythontest:latest --insecure'
         }
       }
     }
