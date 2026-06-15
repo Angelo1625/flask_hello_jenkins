@@ -16,14 +16,14 @@ spec:
     - cat
     tty: true
   - name: docker
-    image: docker:24.0-dind
+    image: docker:24.0-dind-rootless
     securityContext:
       privileged: true
     env:
     - name: DOCKER_TLS_CERTDIR
       value: ""
     - name: DOCKER_HOST
-      value: "tcp://localhost:2375"
+      value: unix:///var/run/user/1000/docker.sock
   volumes:
   - name: workspace-volume
     emptyDir: {}
@@ -45,9 +45,9 @@ spec:
     stage('Build image') {
       steps {
         container('docker') {
-          sh "sleep 5"
-          sh "DOCKER_HOST=tcp://localhost:2375 docker build -t localhost:4000/pythontest:latest ."
-          sh "DOCKER_HOST=tcp://localhost:2375 docker push localhost:4000/pythontest:latest"
+          sh "sleep 10"
+          sh "docker build -t localhost:4000/pythontest:latest ."
+          sh "docker push localhost:4000/pythontest:latest"
         }
       }
     }
