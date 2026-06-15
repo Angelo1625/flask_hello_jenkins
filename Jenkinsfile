@@ -15,19 +15,19 @@ spec:
     command:
     - cat
     tty: true
-
   - name: docker
-    image: docker
+    image: docker:dind
     command:
     - cat
     tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
+    securityContext:
+      privileged: true
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""
   volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+  - name: workspace-volume
+    emptyDir: {}
 """
     }
   }
@@ -43,7 +43,6 @@ spec:
         }
       }
     }
-
     stage('Build image') {
       steps {
         container('docker') {
