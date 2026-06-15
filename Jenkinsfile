@@ -10,24 +10,23 @@ metadata:
     component: ci
 spec:
   containers:
-  - name: python
-    image: python:3.7
-    command:
-    - cat
-    tty: true
-  - name: docker
-    image: docker:dind
-    command:
-    - cat
-    tty: true
-    securityContext:
-      privileged: true
-    env:
-    - name: DOCKER_TLS_CERTDIR
-      value: ""
-  volumes:
-  - name: workspace-volume
-    emptyDir: {}
+    - name: python
+      image: python:3.7
+      command:
+      - cat
+      tty: true
+    - name: docker 
+      image: docker 
+      command: 
+      - cat 
+      tty: true 
+      volumeMounts: 
+      - mountPath: /var/run/docker.sock 
+        name: docker-sock 
+  volumes: 
+      - name: docker-sock
+        hostPath: 
+          path: /var/run/docker.sock
 """
     }
   }
