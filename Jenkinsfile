@@ -16,16 +16,12 @@ spec:
     - cat
     tty: true
 
-  - name: docker
-    image: docker
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
     command:
-    - cat
-    tty: true
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
+    - sleep
+    args:
+    - 99d
 
   - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.2
@@ -55,9 +51,8 @@ spec:
 
     stage('Build image') {
       steps {
-        container('docker') {
-          sh "docker build -t localhost:4000/pythontest:latest ."
-          sh "docker push localhost:4000/pythontest:latest"
+        container('kaniko') {
+          sh "/kaniko/executor --context=dir://. --dockerfile=Dockerfile --destination=localhost:4000/pythontest:latest --insecure"
         }
       }
     }
