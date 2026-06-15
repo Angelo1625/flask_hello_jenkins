@@ -21,6 +21,12 @@ spec:
     - sleep
     args:
     - "9999999"
+
+  - name: kubectl
+    image: lachlanevenson/k8s-kubectl:v1.17.2
+    command:
+    - cat
+    tty: true
   volumes:
   - name: workspace-volume
     emptyDir: {}
@@ -49,6 +55,14 @@ spec:
               --insecure \
               --skip-tls-verify
           """
+        }
+      }
+    }
+    stage('Deploy') {
+      steps {
+        container('kubectl') {
+          sh "kubectl apply -f ./kubernetes/deployment.yaml"
+          sh "kubectl apply -f ./kubernetes/service.yaml"
         }
       }
     }
