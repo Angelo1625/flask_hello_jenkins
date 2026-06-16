@@ -27,6 +27,13 @@ spec:
     command:
     - cat
     tty: true
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command:
+    - cat
+    tty: true
+    securityContext:
+      runAsUser: 0
   volumes:
   - name: workspace-volume
     emptyDir: {}
@@ -63,6 +70,7 @@ spec:
         container('kubectl') {
           sh "kubectl apply -f ./kubernetes/deployment.yaml"
           sh "kubectl apply -f ./kubernetes/service.yaml"
+          sh "kubectl rollout status deployment/pythontest -n jenkins"
         }
       }
     }
