@@ -9,6 +9,7 @@ metadata:
   labels:
     component: ci
 spec:
+  serviceAccountName: jenkins
   containers:
   - name: python
     image: python:3.7
@@ -21,19 +22,11 @@ spec:
     - sleep
     args:
     - "9999999"
-
   - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.2
     command:
     - cat
     tty: true
-  - name: kubectl
-    image: bitnami/kubectl:latest
-    command:
-    - cat
-    tty: true
-    securityContext:
-      runAsUser: 0
   volumes:
   - name: workspace-volume
     emptyDir: {}
