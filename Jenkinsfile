@@ -48,7 +48,7 @@ spec:
     stage('Build image') {
       steps {
         container('kaniko') {
-          sh "/kaniko/executor --context=dir:///home/jenkins/agent/workspace/flask_hello_jenkins_main --destination=10.96.181.172:5000/pythontest:latest --insecure --skip-tls-verify"
+          sh "/kaniko/executor --context=dir://${WORKSPACE} --destination=10.96.181.172:5000/pythontest:latest --insecure --skip-tls-verify"
         }
       }
     }
