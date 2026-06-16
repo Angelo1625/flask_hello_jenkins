@@ -48,13 +48,7 @@ spec:
     stage('Build image') {
       steps {
         container('kaniko') {
-          sh """
-            /kaniko/executor \
-              --context=dir:///home/jenkins/agent/workspace/flask_hello_jenkins_main \
-              --destination=10.96.181.172:5000/pythontest:latest
-              --insecure \
-              --skip-tls-verify
-          """
+          sh "/kaniko/executor --context=dir:///home/jenkins/agent/workspace/flask_hello_jenkins_main --destination=10.96.181.172:5000/pythontest:latest --insecure --skip-tls-verify"
         }
       }
     }
@@ -63,7 +57,7 @@ spec:
         container('kubectl') {
           sh "kubectl apply -f ./kubernetes/deployment.yaml"
           sh "kubectl apply -f ./kubernetes/service.yaml"
-          sh "kubectl rollout status deployment/pythontest -n jenkins"
+          sh "kubectl rollout status deployment/pythontest -n jenkins --timeout=120s"
         }
       }
     }
