@@ -18,8 +18,9 @@ spec:
         app: pythontest
     spec:
       containers:
-      - image: registry-service.jenkins.svc.cluster.local:5000/pythontest:latest
+      - image: 10.96.181.172:5000/pythontest:latest
         name: pythontest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
           name: microport

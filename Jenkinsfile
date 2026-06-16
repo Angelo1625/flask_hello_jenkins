@@ -51,7 +51,7 @@ spec:
           sh """
             /kaniko/executor \
               --context=dir:///home/jenkins/agent/workspace/flask_hello_jenkins_main \
-              --destination=registry-service.jenkins.svc.cluster.local:5000/pythontest:latest \
+              --destination=10.96.181.172:5000/pythontest:latest
               --insecure \
               --skip-tls-verify
           """
